@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ข้อสอบวิชาคณิตศาสตร์ ชั้นประถมศึกษาปีที่ 5 (เทอม 1)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Sarabun', sans-serif; }
+    .fraction {
+      display: inline-grid;
+      grid-template-rows: auto auto;
+      vertical-align: middle;
+      text-align: center;
+      line-height: 1;
+      font-size: .88em;
+      margin: 0 .12em;
+    }
+    .fraction-numerator {
+      border-bottom: 1px solid currentColor;
+      padding: 0 .12em .1em;
+    }
+    .fraction-denominator { padding: .1em .12em 0; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen p-4 md:p-8 flex flex-col items-center">
+
+  <div class="w-full max-w-3xl bg-white shadow-md rounded-2xl p-6 md:p-8 border border-slate-200">
+    <div class="border-b border-slate-200 pb-4 mb-6 text-center">
+      <h1 class="text-2xl md:text-3xl font-bold text-blue-700">ข้อสอบวิชาคณิตศาสตร์ ชั้นประถมศึกษาปีที่ 5 (เทอม 1)</h1>
+      <p class="text-sm text-slate-500 mt-1">เนื้อหา: เศษส่วน ทศนิยม บัญญัติไตรยางศ์ และร้อยละ/เปอร์เซ็นต์ (30 ข้อ)</p>
+    </div>
+
+    <!-- Interactive Quiz Container -->
+    <div id="quiz-container">
+      <div class="flex justify-between items-center mb-4 text-sm font-semibold text-slate-600">
+        <span id="question-tracker">ข้อที่ 1 / 30</span>
+        <span id="score-tracker" class="bg-blue-50 text-blue-700 px-3 py-1 rounded-full border border-blue-200">คะแนน: 0</span>
+      </div>
+
+      <div class="w-full bg-slate-100 rounded-full h-2.5 mb-6 overflow-hidden">
+        <div id="progress-bar" class="bg-blue-600 h-2.5 rounded-full transition-all duration-300" style="width: 3.33%"></div>
+      </div>
+
+      <div class="mb-6">
+        <h2 id="question-text" class="text-lg md:text-xl font-semibold text-slate-800 leading-relaxed"></h2>
+      </div>
+
+      <div id="options-container" class="space-y-3 mb-6"></div>
+
+      <!-- Feedback Section -->
+      <div id="feedback-container" class="hidden rounded-xl p-4 mb-6 transition-all duration-200">
+        <p id="feedback-status" class="font-bold text-base mb-1"></p>
+        <p id="feedback-explanation" class="text-sm text-slate-700 leading-relaxed"></p>
+      </div>
+
+      <button id="next-btn" class="hidden w-full py-3 px-6 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow transition duration-150">
+        ข้อถัดไป
+      </button>
+    </div>
+
+    <!-- Summary Container -->
+    <div id="summary-container" class="hidden text-center py-6">
+      <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-blue-100 text-blue-600 text-3xl font-bold mb-4">
+        🏆
+      </div>
+      <h2 class="text-2xl font-bold text-slate-800 mb-2">สรุปผลคะแนนการทำแบบทดสอบ</h2>
+      <p id="final-score-text" class="text-xl text-blue-700 font-semibold mb-6"></p>
+
+      <div class="flex flex-col sm:flex-row gap-3 justify-center mb-8">
+        <button onclick="restartQuiz()" class="py-2.5 px-6 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow transition">
+          ทำแบบทดสอบใหม่อีกครั้ง
+        </button>
+        <button onclick="toggleAnswerSheet()" class="py-2.5 px-6 bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold rounded-xl border border-slate-300 transition">
+          ดูเฉลยละเอียดครบ 30 ข้อ
+        </button>
+      </div>
+    </div>
+
+    <!-- Full Answer Key Sheet -->
+    <div id="answer-sheet" class="mt-8 pt-6 border-t border-slate-200">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-bold text-slate-800">เฉลยละเอียดและโจทย์ทั้งหมด 30 ข้อ</h3>
+        <button id="toggle-sheet-btn" onclick="toggleAnswerSheet()" class="text-sm text-blue-600 hover:underline">
+          ซ่อนเฉลย
+        </button>
+      </div>
+      <div id="answers-list" class="space-y-4 text-sm"></div>
+    </div>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        q: "1. ข้อใดมีค่าเท่ากับเศษส่วนอย่างต่ำของ 18/24",
+        options: ["ก. 2/3", "ข. 3/4", "ค. 4/5", "ง. 9/12"],
+        correct: 1,
+        exp: "นำ 6 มาหารทั้งเศษและส่วน: 18 ÷ 6 = 3 และ 24 ÷ 6 = 4 ได้ 3/4"
+      },
+      {
+        q: "2. ผลบวกของ 3/5 + 1/2 มีค่าเท่ากับเท่าใด",
+        options: ["ก. 4/7", "ข. 4/10", "ค. 1 1/10", "ง. 1 2/5"],
+        correct: 2,
+        exp: "ทำส่วนให้เท่ากันด้วย ค.ร.น. คือ 10 จะได้ 6/10 + 5/10 = 11/10 = 1 1/10"
+      },
+      {
+        q: "3. ผลลบของ 7/8 - 2/3 เท่ากับข้อใด",
+        options: ["ก. 5/24", "ข. 5/5", "ค. 1/4", "ง. 7/24"],
+        correct: 0,
+        exp: "ทำส่วนให้เป็น 24 จะได้ 21/24 - 16/24 = 5/24"
+      },
+      {
+        q: "4. ค่าของ 2 1/3 + 1 3/4 เท่ากับเท่าใด",
+        options: ["ก. 3 4/7", "ข. 3 11/12", "ค. 4 1/12", "ง. 4 1/6"],
+        correct: 2,
+        exp: "2 + 1 = 3 และ 1/3 + 3/4 = 4/12 + 9/12 = 13/12 = 1 1/12 รวมกันได้ 3 + 1 1/12 = 4 1/12"
+      },
+      {
+        q: "5. ผลคูณของ 4/9 × 3/8 มีค่าเท่ากับเท่าใด",
+        options: ["ก. 1/6", "ข. 1/8", "ค. 2/3", "ง. 7/17"],
+        correct: 0,
+        exp: "ตัดทอน 4 กับ 8 ได้ 1 กับ 2 และ 3 กับ 9 ได้ 1 กับ 3 จะได้ (1×1)/(3×2) = 1/6"
+      },
+      {
+        q: "6. ผลหารของ 5/6 ÷ 2/3 เท่ากับเท่าใด",
+        options: ["ก. 5/9", "ข. 1 1/4", "ค. 1 1/2", "ง. 4/5"],
+        correct: 1,
+        exp: "เปลี่ยนหารเป็นคูณกลับเศษเป็นส่วน: 5/6 × 3/2 = 15/12 = 5/4 = 1 1/4"
+      },
+      {
+        q: "7. เชือกเส้นหนึ่งยาว 12 เมตร ตัดแบ่งออกเป็นท่อนละ 3/4 เมตร จะตัดได้ทั้งหมดกี่ท่อน",
+        options: ["ก. 9 ท่อน", "ข. 15 ท่อน", "ค. 16 ท่อน", "ง. 18 ท่อน"],
+        correct: 2,
+        exp: "12 ÷ (3/4) = 12 × (4/3) = 4 × 4 = 16 ท่อน"
+      },
+      {
+        q: "8. มีน้ำมันพืช 4 1/2 ลิตร ใช้ทอดอาหารไป 1 3/4 ลิตร เหลือน้ำมันพืชกี่ลิตร",
+        options: ["ก. 2 3/4 ลิตร", "ข. 3 1/4 ลิตร", "ค. 2 1/2 ลิตร", "ง. 3 ลิตร"],
+        correct: 0,
+        exp: "4 2/4 - 1 3/4 = 3 6/4 - 1 3/4 = 2 3/4 ลิตร"
+      },
+      {
+        q: "9. ข้อใดเรียงลำดับเศษส่วนจากน้อยไปมากได้ถูกต้อง",
+        options: ["ก. 1/2, 2/5, 3/4", "ข. 2/5, 1/2, 3/4", "ค. 3/4, 1/2, 2/5", "ง. 1/2, 3/4, 2/5"],
+        correct: 1,
+        exp: "แปลงส่วนให้เท่ากับ 20: 2/5 = 8/20, 1/2 = 10/20, 3/4 = 15/20 จึงเรียงเป็น 2/5, 1/2, 3/4"
+      },
+      {
+        q: "10. ข้อใดเขียนเศษส่วน 7/20 ในรูปทศนิยมได้ถูกต้อง",
+        options: ["ก. 0.7", "ข. 0.07", "ค. 0.35", "ง. 0.035"],
+        correct: 2,
+        exp: "คูณ 5 ทั้งเศษและส่วน: (7×5)/(20×5) = 35/100 = 0.35"
+      },
+      {
+        q: "11. ทศนิยม 0.48 เขียนเป็นเศษส่วนอย่างต่ำได้ตามข้อใด",
+        options: ["ก. 12/25", "ข. 24/50", "ค. 48/100", "ง. 6/12"],
+        correct: 0,
+        exp: "0.48 = 48/100 นำ 4 มาหารทั้งเศษและส่วนได้ 12/25"
+      },
+      {
+        q: "12. เลขโดด 7 ใน 45.378 มีค่าประจำหลักและค่าของเลขโดดตามลำดับคือข้อใด",
+        options: [
+          "ก. หลักส่วนสิบ, 0.7",
+          "ข. หลักส่วนร้อย, 0.07",
+          "ค. หลักส่วนพัน, 0.007",
+          "ง. หลักสิบ, 70"
+        ],
+        correct: 1,
+        exp: "เลข 7 อยู่หลังจุดทศนิยมตำแหน่งที่สอง คือหลักส่วนร้อย มีค่าเท่ากับ 0.07"
+      },
+      {
+        q: "13. ค่าประมาณเป็นทศนิยม 1 ตำแหน่งของ 18.46 คือข้อใด",
+        options: ["ก. 18.4", "ข. 18.5", "ค. 19.0", "ง. 18.40"],
+        correct: 1,
+        exp: "พิจารณาตำแหน่งที่สองคือ 6 ซึ่งมากกว่าหรือเท่ากับ 5 ให้ปัดขึ้นจาก 4 เป็น 5 จึงได้ 18.5"
+      },
+      {
+        q: "14. ค่าประมาณเป็นจำนวนเต็มของ 24.39 คือข้อใด",
+        options: ["ก. 24", "ข. 25", "ค. 24.4", "ง. 24.5"],
+        correct: 0,
+        exp: "พิจารณาเลขหลังจุดคือ 3 ซึ่งน้อยกว่า 5 ให้ปัดทิ้ง จึงได้ 24"
+      },
+      {
+        q: "15. ผลลัพธ์ของ 12.35 + 4.8 เท่ากับเท่าใด",
+        options: ["ก. 16.43", "ข. 17.15", "ค. 17.35", "ง. 16.15"],
+        correct: 1,
+        exp: "ตั้งจุดให้ตรงกัน: 12.35 + 4.80 = 17.15"
+      },
+      {
+        q: "16. ผลลัพธ์ของ 40.5 - 18.76 เท่ากับเท่าใด",
+        options: ["ก. 21.74", "ข. 21.84", "ค. 22.74", "ง. 31.74"],
+        correct: 0,
+        exp: "40.50 - 18.76 = 21.74"
+      },
+      {
+        q: "17. ผลคูณของ 3.25 × 6 มีค่าเท่ากับข้อใด",
+        options: ["ก. 18.50", "ข. 19.20", "ค. 19.50", "ง. 19.55"],
+        correct: 2,
+        exp: "325 × 6 = 1950 ใส่ทศนิยม 2 ตำแหน่ง ได้ 19.50"
+      },
+      {
+        q: "18. ผลคูณของ 1.4 × 0.8 มีค่าเท่ากับข้อใด",
+        options: ["ก. 1.12", "ข. 0.112", "ค. 11.2", "ง. 0.96"],
+        correct: 0,
+        exp: "14 × 8 = 112 ทศนิยม 1 ตำแหน่งรวมกับ 1 ตำแหน่ง เป็น 2 ตำแหน่ง ได้ 1.12"
+      },
+      {
+        q: "19. ผลหารของ 45.6 ÷ 8 มีค่าเท่ากับเท่าใด",
+        options: ["ก. 5.7", "ข. 5.07", "ค. 0.57", "ง. 57"],
+        correct: 0,
+        exp: "45.6 ÷ 8 = 5.7"
+      },
+      {
+        q: "20. ผลหารของ 9 ÷ 4 เขียนในรูปทศนิยมได้ตามข้อใด",
+        options: ["ก. 2.1", "ข. 2.2", "ค. 2.25", "ง. 2.5"],
+        correct: 2,
+        exp: "9 ÷ 4 = 2 เหลือเศษ 1 เติมจุดใส่ 0 หารต่อได้ 2.25"
+      },
+      {
+        q: "21. ดินสอ 5 แท่ง ราคา 45 บาท ถ้าซื้อดินสอ 8 แท่ง จะต้องจ่ายเงินกี่บาท",
+        options: ["ก. 64 บาท", "ข. 72 บาท", "ค. 80 บาท", "ง. 90 บาท"],
+        correct: 1,
+        exp: "ดินสอ 1 แท่ง ราคา 45 ÷ 5 = 9 บาท ดังนั้น 8 แท่ง ราคา 8 × 9 = 72 บาท"
+      },
+      {
+        q: "22. รถยนต์แล่นเป็นระยะทาง 150 กิโลเมตร ใช้น้ำมัน 10 ลิตร ถ้ารถยนต์แล่น 300 กิโลเมตร จะต้องใช้น้ำมันกี่ลิตร",
+        options: ["ก. 15 ลิตร", "ข. 20 ลิตร", "ค. 25 ลิตร", "ง. 30 ลิตร"],
+        correct: 1,
+        exp: "1 ลิตร วิ่งได้ 150 ÷ 10 = 15 กม. ดังนั้นระยะทาง 300 กม. ใช้น้ำมัน 300 ÷ 15 = 20 ลิตร"
+      },
+      {
+        q: "23. สมุด 1 โหล (12 เล่ม) ราคา 180 บาท ถ้ามีเงิน 75 บาท จะซื้อสมุดได้กี่เล่ม",
+        options: ["ก. 4 เล่ม", "ข. 5 เล่ม", "ค. 6 เล่ม", "ง. 7 เล่ม"],
+        correct: 1,
+        exp: "สมุด 1 เล่ม ราคา 180 ÷ 12 = 15 บาท มีเงิน 75 บาท ซื้อได้ 75 ÷ 15 = 5 เล่ม"
+      },
+      {
+        q: "24. ข้อใดเขียน 35% ในรูปร้อยละและเศษส่วนได้อย่างถูกต้อง",
+        options: [
+          "ก. ร้อยละ 35 และ 35/10",
+          "ข. ร้อยละ 35 และ 7/20",
+          "ค. ร้อยละ 3.5 และ 35/100",
+          "ง. ร้อยละ 350 และ 7/20"
+        ],
+        correct: 1,
+        exp: "35% คือ ร้อยละ 35 เขียนเป็นเศษส่วนได้ 35/100 ทอนเป็นอย่างต่ำได้ 7/20"
+      },
+      {
+        q: "25. ข้อใดมีค่าเท่ากับ ร้อยละ 40 ของเงิน 500 บาท",
+        options: ["ก. 150 บาท", "ข. 200 บาท", "ค. 250 บาท", "ง. 300 บาท"],
+        correct: 1,
+        exp: "(40/100) × 500 = 40 × 5 = 200 บาท"
+      },
+      {
+        q: "26. โรงเรียนแห่งหนึ่งมีนักเรียน 800 คน เป็นนักเรียนชาย 45% โรงเรียนนี้มีนักเรียนหญิงกี่คน",
+        options: ["ก. 360 คน", "ข. 400 คน", "ค. 440 คน", "ง. 520 คน"],
+        correct: 2,
+        exp: "นักเรียนหญิงคิดเป็น 100% - 45% = 55% จำนวนนักเรียนหญิง = (55/100) × 800 = 440 คน"
+      },
+      {
+        q: "27. เสื้อตัวหนึ่งติดป้ายราคา 650 บาท ร้านค้าลดราคาให้ 20% ผู้ซื้อต้องจ่ายเงินกี่บาท",
+        options: ["ก. 130 บาท", "ข. 520 บาท", "ค. 500 บาท", "ง. 480 บาท"],
+        correct: 1,
+        exp: "ส่วนลด = (20/100) × 650 = 130 บาท ผู้ซื้อต้องจ่าย = 650 - 130 = 520 บาท"
+      },
+      {
+        q: "28. พ่อค้าซื้อพัดลมมาราคา 800 บาท ขายไปได้กำไร 15% พ่อค้าขายพัดลมไปในราคากี่บาท",
+        options: ["ก. 120 บาท", "ข. 900 บาท", "ค. 920 บาท", "ง. 950 บาท"],
+        correct: 2,
+        exp: "กำไร = (15/100) × 800 = 120 บาท ราคาขาย = 800 + 120 = 920 บาท"
+      },
+      {
+        q: "29. ซื้อรองเท้าราคา 1,200 บาท ขายต่อขาดทุน 10% ขายรองเท้าไปได้เงินเท่าใด",
+        options: ["ก. 1,080 บาท", "ข. 1,100 บาท", "ค. 1,120 บาท", "ง. 120 บาท"],
+        correct: 0,
+        exp: "ขาดทุน = (10/100) × 1200 = 120 บาท ราคาขาย = 1200 - 120 = 1,080 บาท"
+      },
+      {
+        q: "30. ปริมาณน้ำผลไม้กล่องเดิมมี 250 มิลลิลิตร ผู้ผลิตเพิ่มปริมาณให้อีก 20% กล่องใหม่จะมีน้ำผลไม้กี่มิลลิลิตร",
+        options: ["ก. 270 มิลลิลิตร", "ข. 280 มิลลิลิตร", "ค. 300 มิลลิลิตร", "ง. 320 มิลลิลิตร"],
+        correct: 2,
+        exp: "ปริมาณที่เพิ่ม = (20/100) × 250 = 50 มิลลิลิตร รวมเป็น 250 + 50 = 300 มิลลิลิตร"
+      }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+    let answered = false;
+
+    const questionTracker = document.getElementById('question-tracker');
+    const scoreTracker = document.getElementById('score-tracker');
+    const progressBar = document.getElementById('progress-bar');
+    const questionText = document.getElementById('question-text');
+    const optionsContainer = document.getElementById('options-container');
+    const feedbackContainer = document.getElementById('feedback-container');
+    const feedbackStatus = document.getElementById('feedback-status');
+    const feedbackExplanation = document.getElementById('feedback-explanation');
+    const nextBtn = document.getElementById('next-btn');
+
+    const quizContainer = document.getElementById('quiz-container');
+    const summaryContainer = document.getElementById('summary-container');
+    const finalScoreText = document.getElementById('final-score-text');
+    const answerSheet = document.getElementById('answer-sheet');
+    const answersList = document.getElementById('answers-list');
+    const toggleSheetBtn = document.getElementById('toggle-sheet-btn');
+
+    function renderFractions(element, text) {
+      element.replaceChildren();
+      const fractionPattern = /(\d+)\/(\d+)/g;
+      let lastIndex = 0;
+      let match;
+
+      while ((match = fractionPattern.exec(text)) !== null) {
+        element.append(document.createTextNode(text.slice(lastIndex, match.index)));
+
+        const fraction = document.createElement('span');
+        fraction.className = 'fraction';
+        const numerator = document.createElement('span');
+        numerator.className = 'fraction-numerator';
+        numerator.textContent = match[1];
+        const denominator = document.createElement('span');
+        denominator.className = 'fraction-denominator';
+        denominator.textContent = match[2];
+        fraction.append(numerator, denominator);
+        element.appendChild(fraction);
+
+        lastIndex = fractionPattern.lastIndex;
+      }
+
+      element.append(document.createTextNode(text.slice(lastIndex)));
+    }
+
+    function loadQuestion() {
+      answered = false;
+      feedbackContainer.classList.add('hidden');
+      nextBtn.classList.add('hidden');
+
+      const q = questions[currentQuestion];
+      questionTracker.textContent = `ข้อที่ ${currentQuestion + 1} / ${questions.length}`;
+      scoreTracker.textContent = `คะแนน: ${score}`;
+      progressBar.style.width = `${((currentQuestion + 1) / questions.length) * 100}%`;
+      renderFractions(questionText, q.q);
+
+      optionsContainer.innerHTML = '';
+      q.options.forEach((opt, index) => {
+        const btn = document.createElement('button');
+        btn.className = "w-full text-left p-3.5 border border-slate-200 rounded-xl hover:bg-blue-50 hover:border-blue-300 transition duration-150 text-slate-800 font-medium";
+        renderFractions(btn, opt);
+        btn.onclick = () => selectOption(index);
+        optionsContainer.appendChild(btn);
+      });
+    }
+
+    function selectOption(selectedIndex) {
+      if (answered) return;
+      answered = true;
+
+      const q = questions[currentQuestion];
+      const buttons = optionsContainer.querySelectorAll('button');
+
+      buttons.forEach((btn, idx) => {
+        btn.disabled = true;
+        btn.classList.remove('hover:bg-blue-50', 'hover:border-blue-300');
+        if (idx === q.correct) {
+          btn.className = "w-full text-left p-3.5 border-2 border-emerald-500 bg-emerald-50 text-emerald-900 font-semibold rounded-xl";
+        } else if (idx === selectedIndex) {
+          btn.className = "w-full text-left p-3.5 border-2 border-rose-500 bg-rose-50 text-rose-900 font-semibold rounded-xl";
+        } else {
+          btn.className = "w-full text-left p-3.5 border border-slate-200 rounded-xl text-slate-400 bg-slate-50";
+        }
+      });
+
+      const isCorrect = selectedIndex === q.correct;
+      if (isCorrect) {
+        score++;
+        scoreTracker.textContent = `คะแนน: ${score}`;
+        feedbackContainer.className = "rounded-xl p-4 mb-6 bg-emerald-50 border border-emerald-200 text-emerald-900 block";
+        feedbackStatus.textContent = "✓ ถูกต้อง!";
+      } else {
+        feedbackContainer.className = "rounded-xl p-4 mb-6 bg-rose-50 border border-rose-200 text-rose-900 block";
+        feedbackStatus.textContent = "✗ ยังไม่ถูกต้อง!";
+      }
+
+      renderFractions(feedbackExplanation, `คำอธิบาย: ${q.exp}`);
+      nextBtn.classList.remove('hidden');
+
+      if (currentQuestion === questions.length - 1) {
+        nextBtn.textContent = "ดูผลคะแนนรวม";
+      } else {
+        nextBtn.textContent = "ข้อถัดไป";
+      }
+    }
+
+    nextBtn.onclick = () => {
+      currentQuestion++;
+      if (currentQuestion < questions.length) {
+        loadQuestion();
+      } else {
+        showSummary();
+      }
+    };
+
+    function showSummary() {
+      quizContainer.classList.add('hidden');
+      summaryContainer.classList.remove('hidden');
+      finalScoreText.textContent = `คุณทำคะแนนได้ ${score} จาก ${questions.length} คะแนน (${Math.round((score / questions.length) * 100)}%)`;
+      renderAnswerKey();
+    }
+
+    function restartQuiz() {
+      currentQuestion = 0;
+      score = 0;
+      summaryContainer.classList.add('hidden');
+      quizContainer.classList.remove('hidden');
+      loadQuestion();
+    }
+
+    function renderAnswerKey() {
+      answersList.innerHTML = '';
+      questions.forEach((item, index) => {
+        const itemDiv = document.createElement('div');
+        itemDiv.className = "p-3 rounded-lg bg-slate-50 border border-slate-200";
+        const question = document.createElement('p');
+        question.className = "font-semibold text-slate-800";
+        renderFractions(question, item.q);
+        const answer = document.createElement('p');
+        answer.className = "text-emerald-700 font-medium mt-1";
+        renderFractions(answer, `เฉลย: ${item.options[item.correct]}`);
+        const explanation = document.createElement('p');
+        explanation.className = "text-slate-600 text-xs mt-0.5";
+        renderFractions(explanation, `คำอธิบาย: ${item.exp}`);
+        itemDiv.append(question, answer, explanation);
+        answersList.appendChild(itemDiv);
+      });
+    }
+
+    function toggleAnswerSheet() {
+      if (answerSheet.classList.contains('hidden')) {
+        answerSheet.classList.remove('hidden');
+        toggleSheetBtn.textContent = "ซ่อนเฉลย";
+      } else {
+        answerSheet.classList.add('hidden');
+        toggleSheetBtn.textContent = "แสดงเฉลย";
+      }
+    }
+
+    // Initialize on load
+    loadQuestion();
+    renderAnswerKey();
+  </script>
+</body>
+</html>
