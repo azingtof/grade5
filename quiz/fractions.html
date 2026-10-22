@@ -1,0 +1,162 @@
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>สอบวิชาคณิตศาสตร์ ป.5 เรื่องเศษส่วน</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f4f7fb;color:#172033;font-family:Tahoma,sans-serif}
+main{max-width:760px;margin:auto;padding:18px}
+header,.card{background:white;border-radius:18px;padding:22px;margin:12px 0;box-shadow:0 4px 16px #1231}
+header{background:#e7f0ff;color:#1c427b;text-align:center}
+h1{font-size:26px;margin:5px}
+button{font:inherit;padding:12px 16px;border-radius:10px;border:1px solid #ccd5e2;background:white;cursor:pointer}
+.primary{background:#174ea6;color:white;border-color:#174ea6}
+.choice{display:flex;gap:10px;padding:13px;border:1px solid #d5deea;border-radius:12px;margin:9px 0;cursor:pointer}
+.choice:has(input:checked){background:#edf4ff;border-color:#174ea6}
+.choice input{margin-top:5px}
+.muted{color:#667085}
+.feedback{padding:12px;border-radius:10px;margin:12px 0;line-height:1.7}
+.ok{background:#e5f7eb;color:#176536}
+.no{background:#fff0ed;color:#9d2b1c}
+.hidden{display:none}
+.bar{height:8px;background:#e5eaf2;border-radius:9px;overflow:hidden;margin-top:12px}
+.bar span{display:block;height:100%;background:#2874d0}
+.row{display:flex;justify-content:space-between;gap:10px;align-items:center}
+#review p{line-height:1.7;border-bottom:1px solid #eee;padding-bottom:8px}
+@media(max-width:500px){main{padding:10px}.card,header{padding:16px}}
+</style>
+</head>
+<body>
+<main>
+<header><h1>สอบวิชาคณิตศาสตร์ ป.5 เรื่องเศษส่วน</h1></header>
+
+<section id="intro" class="card">
+<p>ข้อสอบ 30 ข้อ · ตัวเลือก 4 ตัวเลือก</p>
+<p class="muted">ตอบทีละข้อ ระบบจะแจ้งผลหลังตอบ และสรุปคะแนนเมื่อทำครบ</p>
+<button class="primary" id="start">เริ่มทำข้อสอบ</button>
+</section>
+
+<section id="exam" class="card hidden">
+<div class="row"><span id="count"></span><span id="points" class="muted"></span></div>
+<div class="bar"><span id="progress" style="width:0"></span></div>
+<h2 id="question"></h2>
+<form id="form">
+<div id="options"></div>
+<div id="feedback" class="feedback hidden" aria-live="polite"></div>
+<button id="submit" class="primary">ส่งคำตอบ</button>
+</form>
+</section>
+
+<section id="result" class="card hidden">
+<h2>สรุปคะแนน</h2>
+<p id="score"></p>
+<h3>เฉลยและคำอธิบาย</h3>
+<div id="review"></div>
+<button class="primary" onclick="location.reload()">ทำข้อสอบอีกครั้ง</button>
+<p><a href="../index.html">กลับหน้าหลัก</a></p>
+</section>
+</main>
+
+<script>
+const questions = [
+["เศษส่วนใดเท่ากับ 1/2",["2/3","2/4","3/5","4/5"],1,"2/4 หารทั้งเศษและส่วนด้วย 2 ได้ 1/2"],
+["เศษส่วนใดมีค่ามากที่สุด",["1/3","1/2","2/5","3/8"],1,"1/2 มีค่ามากกว่าตัวเลือกอื่น"],
+["เศษส่วนใดมีค่าน้อยที่สุด",["3/4","2/3","1/2","5/6"],2,"1/2 มีค่าน้อยที่สุด"],
+["1/5 + 2/5 เท่ากับเท่าใด",["2/5","3/10","3/5","3/25"],2,"ตัวส่วนเท่ากัน บวกตัวเศษ 1+2=3"],
+["4/7 - 2/7 เท่ากับเท่าใด",["2/7","2/14","6/7","1/7"],0,"ลบตัวเศษ 4-2=2"],
+["2/3 + 1/6 เท่ากับเท่าใด",["3/9","1/2","5/6","1"],2,"2/3 = 4/6 ดังนั้น 4/6+1/6=5/6"],
+["5/6 - 1/3 เท่ากับเท่าใด",["4/3","1/2","2/3","1/3"],1,"1/3 = 2/6 ดังนั้น 5/6-2/6=3/6=1/2"],
+["เศษส่วนใดเท่ากับ 3/4",["6/10","9/12","8/12","12/20"],1,"คูณเศษและส่วนด้วย 3 ได้ 9/12"],
+["2/5 เขียนให้มีตัวส่วนเป็น 20 ได้ข้อใด",["4/20","8/20","10/20","12/20"],1,"คูณทั้งเศษและส่วนด้วย 4"],
+["เรียงจากน้อยไปมากข้อใดถูกต้อง",["1/2, 1/4, 3/4","1/4, 1/2, 3/4","3/4, 1/2, 1/4","1/2, 3/4, 1/4"],1,"เรียงจากน้อยไปมากได้ 1/4, 1/2, 3/4"],
+["กินพิซซ่า 3 ชิ้นจาก 8 ชิ้นเท่ากัน คิดเป็นเท่าใด",["3/8","5/8","3/5","8/3"],0,"กิน 3 ชิ้นจากทั้งหมด 8 ชิ้น"],
+["มีน้ำ 7/10 ลิตร ดื่ม 2/10 ลิตร เหลือเท่าใด",["5/10 ลิตร","9/10 ลิตร","5/20 ลิตร","2/10 ลิตร"],0,"7/10-2/10=5/10 ลิตร"],
+["2/4 + 1/4 เท่ากับเท่าใด",["3/8","3/4","2/8","1/4"],1,"บวกตัวเศษได้ 3/4"],
+["7/8 - 3/8 เท่ากับเท่าใด",["4/8","10/8","4/16","3/8"],0,"7/8-3/8=4/8 หรือ 1/2"],
+["เศษส่วนอย่างต่ำของ 6/8 คือข้อใด",["3/4","2/3","6/4","4/6"],0,"หารทั้งเศษและส่วนด้วย 2"],
+["1/2 + 1/4 เท่ากับเท่าใด",["2/6","3/4","1/6","2/4"],1,"1/2=2/4 แล้ว 2/4+1/4=3/4"],
+["3/5 - 1/10 เท่ากับเท่าใด",["2/5","2/10","1/2","4/10"],2,"3/5=6/10 แล้ว 6/10-1/10=1/2"],
+["เชือกยาว 3/4 เมตร ตัดออก 1/4 เมตร เหลือเท่าใด",["1/2 เมตร","2/8 เมตร","1 เมตร","1/4 เมตร"],0,"3/4-1/4=2/4=1/2 เมตร"],
+["ข้อใดเท่ากับ 5/10",["1/5","2/5","1/2","5/5"],2,"5/10 ย่อเป็น 1/2"],
+["น้ำในถังมี 2/3 ถัง เติมอีก 1/6 ถัง รวมเป็นเท่าใด",["3/9","4/6","5/6","1/2"],2,"2/3=4/6 แล้ว 4/6+1/6=5/6"],
+["3/10 + 4/10 เท่ากับเท่าใด",["7/20","7/10","1/10","12/10"],1,"บวกตัวเศษได้ 7/10"],
+["9/12 ย่อเป็นเศษส่วนอย่างต่ำได้ข้อใด",["2/3","3/4","4/3","1/3"],1,"หารทั้งเศษและส่วนด้วย 3 ได้ 3/4"],
+["2/8 + 3/8 เท่ากับเท่าใด",["5/16","5/8","1/8","6/8"],1,"2/8+3/8=5/8"],
+["5/6 - 1/6 เท่ากับเท่าใด",["4/6","4/12","6/6","3/6"],0,"5/6-1/6=4/6"],
+["เศษส่วนใดมีค่ามากกว่า 1/2",["1/4","2/5","3/4","4/10"],2,"3/4 มากกว่า 1/2"],
+["เศษส่วนใดมีค่าเท่ากับ 2/3",["4/6","3/5","2/6","5/6"],0,"คูณทั้งเศษและส่วนด้วย 2 ได้ 4/6"],
+["มีเค้ก 8 ชิ้น กินไป 5 ชิ้น เหลือเป็นเศษส่วนเท่าใด",["5/8","3/8","3/5","8/5"],1,"เหลือ 3 จากทั้งหมด 8 ชิ้น"],
+["1/4 + 2/8 เท่ากับเท่าใด",["3/12","1/2","3/8","3/4"],1,"1/4=2/8 แล้ว 2/8+2/8=4/8=1/2"],
+["7/10 - 1/5 เท่ากับเท่าใด",["6/5","5/10","1/2","3/10"],2,"1/5=2/10 จึงเหลือ 5/10=1/2"],
+["ข้อใดเรียงจากมากไปน้อยถูกต้อง",["1/4, 1/2, 3/4","3/4, 1/2, 1/4","1/2, 3/4, 1/4","3/4, 1/4, 1/2"],1,"เรียงจากมากไปน้อยคือ 3/4, 1/2, 1/4"]
+];
+
+let index=0, answers=[], locked=false;
+const $=id=>document.getElementById(id);
+const letters=["ก","ข","ค","ง"];
+
+$("start").onclick=()=>{
+  $("intro").classList.add("hidden");
+  $("exam").classList.remove("hidden");
+  draw();
+};
+
+function draw(){
+  locked=false;
+  const q=questions[index];
+  $("count").textContent=`ข้อ ${index+1} / ${questions.length}`;
+  $("points").textContent=`ตอบถูก ${answers.filter((a,j)=>a===questions[j][2]).length} ข้อ`;
+  $("progress").style.width=((index+1)/questions.length*100)+"%";
+  $("question").textContent=q[0];
+  $("options").innerHTML="";
+  q[1].forEach((text,j)=>{
+    const label=document.createElement("label");
+    label.className="choice";
+    const radio=document.createElement("input");
+    radio.type="radio";radio.name="answer";radio.value=j;
+    const span=document.createElement("span");
+    span.textContent=letters[j]+". "+text;
+    label.append(radio,span);
+    $("options").append(label);
+  });
+  $("feedback").className="feedback hidden";
+  $("submit").textContent="ส่งคำตอบ";
+}
+
+$("form").onsubmit=e=>{
+  e.preventDefault();
+  if(!locked){
+    const selected=document.querySelector('input[name="answer"]:checked');
+    if(!selected){alert("กรุณาเลือกคำตอบก่อน");return;}
+    answers[index]=Number(selected.value);
+    locked=true;
+    document.querySelectorAll('input[name="answer"]').forEach(x=>x.disabled=true);
+    const q=questions[index],correct=answers[index]===q[2];
+    $("feedback").className="feedback "+(correct?"ok":"no");
+    $("feedback").textContent=(correct?"ถูกต้อง! ":"ยังไม่ถูกต้อง ")+
+      "เฉลย: "+letters[q[2]]+". "+q[1][q[2]]+" — "+q[3];
+    $("submit").textContent=index===questions.length-1?"ดูคะแนนรวม":"ข้อถัดไป";
+    return;
+  }
+  if(index<questions.length-1){index++;draw();}
+  else finish();
+};
+
+function finish(){
+  const score=answers.filter((a,j)=>a===questions[j][2]).length;
+  $("exam").classList.add("hidden");
+  $("result").classList.remove("hidden");
+  $("score").innerHTML=`<strong style="font-size:24px">${score} / ${questions.length} คะแนน (${Math.round(score/questions.length*100)}%)</strong>`;
+  $("review").innerHTML="";
+  questions.forEach((q,j)=>{
+    const p=document.createElement("p");
+    p.textContent=`${j+1}. ${q[0]} — เฉลย ${letters[q[2]]}. ${q[1][q[2]]}. ${q[3]}`;
+    $("review").append(p);
+  });
+}
+</script>
+</body>
+</html>
