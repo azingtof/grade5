@@ -26,6 +26,9 @@ button{font:inherit;padding:12px 16px;border-radius:10px;border:1px solid #ccd5e
 .bar span{display:block;height:100%;background:#2874d0}
 .row{display:flex;justify-content:space-between;gap:10px;align-items:center}
 #review p{line-height:1.7;border-bottom:1px solid #eee;padding-bottom:8px}
+.fraction{display:inline-grid;grid-template-rows:auto auto;vertical-align:middle;text-align:center;line-height:1;font-size:.85em;margin:0 .08em}
+.fraction sup{border-bottom:1px solid currentColor;padding:0 .12em .1em}
+.fraction sub{padding:.1em .12em 0}
 @media(max-width:500px){main{padding:10px}.card,header{padding:16px}}
 </style>
 </head>
@@ -98,6 +101,26 @@ let index=0, answers=[], locked=false;
 const $=id=>document.getElementById(id);
 const letters=["ก","ข","ค","ง"];
 
+function renderText(target,text){
+  target.replaceChildren();
+  const fractionPattern=/(\d+)\/(\d+)/g;
+  let lastIndex=0,match;
+  while((match=fractionPattern.exec(text))!==null){
+    target.append(document.createTextNode(text.slice(lastIndex,match.index)));
+    const fraction=document.createElement("span");
+    fraction.className="fraction";
+    fraction.setAttribute("aria-label",`เศษ ${match[1]} ส่วน ${match[2]}`);
+    const numerator=document.createElement("sup");
+    numerator.textContent=match[1];
+    const denominator=document.createElement("sub");
+    denominator.textContent=match[2];
+    fraction.append(numerator,denominator);
+    target.append(fraction);
+    lastIndex=fractionPattern.lastIndex;
+  }
+  target.append(document.createTextNode(text.slice(lastIndex)));
+}
+
 $("start").onclick=()=>{
   $("intro").classList.add("hidden");
   $("exam").classList.remove("hidden");
@@ -110,7 +133,7 @@ function draw(){
   $("count").textContent=`ข้อ ${index+1} / ${questions.length}`;
   $("points").textContent=`ตอบถูก ${answers.filter((a,j)=>a===questions[j][2]).length} ข้อ`;
   $("progress").style.width=((index+1)/questions.length*100)+"%";
-  $("question").textContent=q[0];
+  renderText($("question"),q[0]);
   $("options").innerHTML="";
   q[1].forEach((text,j)=>{
     const label=document.createElement("label");
@@ -118,7 +141,7 @@ function draw(){
     const radio=document.createElement("input");
     radio.type="radio";radio.name="answer";radio.value=j;
     const span=document.createElement("span");
-    span.textContent=letters[j]+". "+text;
+    renderText(span,letters[j]+". "+text);
     label.append(radio,span);
     $("options").append(label);
   });
@@ -136,8 +159,8 @@ $("form").onsubmit=e=>{
     document.querySelectorAll('input[name="answer"]').forEach(x=>x.disabled=true);
     const q=questions[index],correct=answers[index]===q[2];
     $("feedback").className="feedback "+(correct?"ok":"no");
-    $("feedback").textContent=(correct?"ถูกต้อง! ":"ยังไม่ถูกต้อง ")+
-      "เฉลย: "+letters[q[2]]+". "+q[1][q[2]]+" — "+q[3];
+    renderText($("feedback"),(correct?"ถูกต้อง! ":"ยังไม่ถูกต้อง ")+
+      "เฉลย: "+letters[q[2]]+". "+q[1][q[2]]+" — "+q[3]);
     $("submit").textContent=index===questions.length-1?"ดูคะแนนรวม":"ข้อถัดไป";
     return;
   }
@@ -153,7 +176,7 @@ function finish(){
   $("review").innerHTML="";
   questions.forEach((q,j)=>{
     const p=document.createElement("p");
-    p.textContent=`${j+1}. ${q[0]} — เฉลย ${letters[q[2]]}. ${q[1][q[2]]}. ${q[3]}`;
+    renderText(p,`${j+1}. ${q[0]} — เฉลย ${letters[q[2]]}. ${q[1][q[2]]}. ${q[3]}`);
     $("review").append(p);
   });
 }
