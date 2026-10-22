@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="แบบทดสอบภาษาอังกฤษ ชั้นประถมศึกษาปีที่ 5 ภาคเรียนที่ 1 จำนวน 30 ข้อ">
+  <title>แบบทดสอบภาษาอังกฤษ ป.5 | เทอม 1</title>
+  <style>
+    :root {
+      --primary: #3563e9;
+      --primary-dark: #2349bd;
+      --bg: #f4f7ff;
+      --card: #ffffff;
+      --text: #1e293b;
+      --muted: #64748b;
+      --border: #dbe4f0;
+      --success: #15803d;
+      --success-bg: #f0fdf4;
+      --danger: #b91c1c;
+      --danger-bg: #fef2f2;
+      --shadow: 0 12px 35px rgba(30, 64, 175, .09);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Noto Sans Thai", "Tahoma", "Segoe UI", sans-serif;
+      color: var(--text);
+      background: linear-gradient(180deg, #eaf0ff 0, var(--bg) 280px, var(--bg) 100%);
+      min-height: 100vh;
+    }
+    button { font: inherit; }
+    .container { width: min(760px, calc(100% - 28px)); margin: 0 auto; padding: 30px 0 42px; }
+    .hero { text-align: center; margin-bottom: 22px; }
+    .badge {
+      display: inline-block; padding: 6px 13px; border-radius: 999px;
+      background: #dce7ff; color: #2448b8; font-size: .88rem; font-weight: 700;
+    }
+    h1 { font-size: clamp(1.55rem, 4vw, 2.1rem); margin: 12px 0 7px; line-height: 1.35; }
+    .subtitle { color: var(--muted); margin: 0; font-size: .98rem; }
+    .panel {
+      background: var(--card); border: 1px solid rgba(219,228,240,.9);
+      border-radius: 20px; box-shadow: var(--shadow); padding: clamp(18px, 4vw, 30px);
+    }
+    .topline { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 13px; }
+    .question-count { font-weight: 800; color: var(--primary-dark); }
+    .topic { color: var(--muted); font-size: .9rem; text-align: right; }
+    .progress-track { height: 8px; background: #e8eefb; border-radius: 99px; overflow: hidden; margin-bottom: 24px; }
+    .progress-fill { height: 100%; width: 0; background: linear-gradient(90deg, #4777ff, #7c5cff); border-radius: inherit; transition: width .25s ease; }
+    .question { font-size: clamp(1.15rem, 3.5vw, 1.42rem); font-weight: 800; line-height: 1.55; margin: 0 0 20px; }
+    .instruction { color: var(--muted); font-size: .92rem; margin: -10px 0 18px; }
+    .options { display: grid; gap: 11px; }
+    .option {
+      display: flex; gap: 12px; align-items: center; width: 100%; text-align: left;
+      padding: 14px 15px; border: 1.5px solid var(--border); border-radius: 13px;
+      background: #fff; cursor: pointer; color: var(--text); transition: .15s ease;
+    }
+    .option:hover:not(:disabled) { border-color: #8da8ff; background: #f8faff; }
+    .option:focus-visible, .btn:focus-visible { outline: 3px solid #a5bfff; outline-offset: 2px; }
+    .letter {
+      flex: 0 0 30px; height: 30px; display: grid; place-items: center;
+      border-radius: 9px; background: #eef2ff; color: #3657c8; font-weight: 800;
+    }
+    .option.selected { border-color: var(--primary); background: #eef3ff; }
+    .option.selected .letter { background: var(--primary); color: white; }
+    .option.correct { border-color: #22a05a; background: var(--success-bg); }
+    .option.correct .letter { background: #15803d; color: #fff; }
+    .option.wrong { border-color: #ef4444; background: var(--danger-bg); }
+    .option.wrong .letter { background: #b91c1c; color: #fff; }
+    .option:disabled { cursor: default; }
+    .feedback { margin-top: 18px; padding: 15px 16px; border-radius: 13px; line-height: 1.7; }
+    .feedback.good { background: var(--success-bg); color: #166534; border: 1px solid #bbf7d0; }
+    .feedback.bad { background: var(--danger-bg); color: #991b1b; border: 1px solid #fecaca; }
+    .feedback strong { display: block; margin-bottom: 3px; }
+    .actions { display: flex; gap: 10px; margin-top: 24px; }
+    .btn {
+      border: 0; border-radius: 12px; padding: 12px 18px; font-weight: 800;
+      cursor: pointer; transition: background .15s ease, transform .15s ease;
+    }
+    .btn:active:not(:disabled) { transform: translateY(1px); }
+    .btn-primary { background: var(--primary); color: white; flex: 1; }
+    .btn-primary:hover:not(:disabled) { background: var(--primary-dark); }
+    .btn-secondary { background: #edf1f8; color: #334155; }
+    .btn-secondary:hover:not(:disabled) { background: #e0e7f1; }
+    .btn:disabled { opacity: .45; cursor: not-allowed; }
+    .result { text-align: center; }
+    .result-icon { width: 76px; height: 76px; display: grid; place-items: center; border-radius: 24px; margin: 0 auto 16px; background: #e0eaff; font-size: 2.3rem; }
+    .result h2 { margin: 0 0 8px; font-size: 1.65rem; }
+    .result p { color: var(--muted); margin: 0 0 22px; }
+    .score-number { font-size: clamp(2.5rem, 10vw, 4rem); color: var(--primary-dark); font-weight: 900; line-height: 1.2; }
+    .score-label { color: var(--muted); margin-bottom: 20px; }
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 20px 0 24px; }
+    .stat { padding: 14px 8px; border: 1px solid var(--border); background: #fbfcff; border-radius: 13px; }
+    .stat strong { display: block; font-size: 1.45rem; margin-bottom: 2px; }
+    .stat span { color: var(--muted); font-size: .87rem; }
+    .stat.good strong { color: var(--success); } .stat.bad strong { color: var(--danger); }
+    .result .btn { width: 100%; }
+    .footer { text-align: center; color: #8491a6; font-size: .82rem; margin-top: 18px; }
+    [hidden] { display: none !important; }
+    @media (max-width: 480px) {
+      .container { width: min(100% - 20px, 760px); padding-top: 22px; }
+      .panel { border-radius: 16px; }
+      .actions { flex-direction: column-reverse; }
+      .actions .btn { width: 100%; }
+      .option { padding: 12px; }
+      .stats { gap: 7px; }
+      .stat span { font-size: .78rem; }
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <header class="hero">
+      <span class="badge">แบบทดสอบออนไลน์ · ป.5</span>
+      <h1>ภาษาอังกฤษ เทอม 1</h1>
+      <p class="subtitle">จำนวน 30 ข้อ · ปรนัย 4 ตัวเลือก · ระดับปานกลาง</p>
+    </header>
+
+    <section class="panel" id="quizPanel" aria-live="polite">
+      <div class="topline">
+        <div class="question-count" id="questionCount">ข้อ 1 / 30</div>
+        <div class="topic" id="topicLabel">คำศัพท์และไวยากรณ์</div>
+      </div>
+      <div class="progress-track" role="progressbar" aria-label="ความคืบหน้า" aria-valuemin="0" aria-valuemax="30" aria-valuenow="1" id="progressTrack">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <h2 class="question" id="questionText"></h2>
+      <p class="instruction">เลือกคำตอบที่ถูกต้องที่สุดเพียง 1 ข้อ</p>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback" hidden aria-live="polite"></div>
+      <div class="actions">
+        <button class="btn btn-secondary" id="prevBtn" type="button">← ข้อก่อนหน้า</button>
+        <button class="btn btn-primary" id="checkBtn" type="button">ตรวจคำตอบ</button>
+        <button class="btn btn-primary" id="nextBtn" type="button" hidden>ข้อถัดไป →</button>
+      </div>
+    </section>
+
+    <section class="panel result" id="resultPanel" hidden aria-live="polite">
+      <div class="result-icon" aria-hidden="true">🏆</div>
+      <h2>ทำแบบทดสอบเสร็จแล้ว!</h2>
+      <p id="resultMessage">มาดูผลคะแนนของคุณกัน</p>
+      <div class="score-number" id="scoreNumber">0/30</div>
+      <div class="score-label" id="scorePercent">คิดเป็น 0%</div>
+      <div class="stats">
+        <div class="stat good"><strong id="correctCount">0</strong><span>ข้อที่ตอบถูก</span></div>
+        <div class="stat bad"><strong id="wrongCount">0</strong><span>ข้อที่ตอบผิด</span></div>
+        <div class="stat"><strong id="answeredCount">30</strong><span>จำนวนข้อทั้งหมด</span></div>
+      </div>
+      <button class="btn btn-primary" id="restartBtn" type="button">ทำแบบทดสอบอีกครั้ง ↻</button>
+    </section>
+    <footer class="footer">แบบฝึกทักษะภาษาอังกฤษ ชั้นประถมศึกษาปีที่ 5</footer>
+  </main>
+
+  <script>
+    "use strict";
+
+    // คำถามภาษาอังกฤษระดับ ป.5 ภาคเรียนที่ 1 จำนวน 30 ข้อ
+    const questions = [
+      {
+        topic: "Greetings",
+        question: "1. ถ้าเพื่อนพูดว่า “Good morning!” เราควรตอบอย่างไร",
+        options: ["Good night!", "Good morning!", "Goodbye!", "I am ten."],
+        answer: 1,
+        explanation: "“Good morning!” ใช้ทักทายในตอนเช้า จึงตอบกลับด้วย “Good morning!” ได้เหมาะสมที่สุด"
+      },
+      {
+        topic: "Introducing yourself",
+        question: "2. ข้อใดใช้ถามชื่อของอีกฝ่ายได้ถูกต้อง",
+        options: ["How old are you?", "Where are you?", "What is your name?", "How are you?"],
+        answer: 2,
+        explanation: "“What is your name?” แปลว่า “คุณชื่ออะไร” ส่วนตัวเลือกอื่นถามอายุ สถานที่ หรือความสบายดี"
+      },
+      {
+        topic: "Numbers",
+        question: "3. เลข 15 เขียนเป็นภาษาอังกฤษว่าอะไร",
+        options: ["Fifty", "Fifteen", "Five", "Fourteen"],
+        answer: 1,
+        explanation: "15 คือ fifteen ส่วน fifty คือ 50 และ fourteen คือ 14"
+      },
+      {
+        topic: "Days",
+        question: "4. วันถัดจาก Tuesday คือวันอะไร",
+        options: ["Monday", "Thursday", "Wednesday", "Friday"],
+        answer: 2,
+        explanation: "ลำดับวันคือ Monday, Tuesday, Wednesday ดังนั้นวันถัดจาก Tuesday คือ Wednesday"
+      },
+      {
+        topic: "Months",
+        question: "5. เดือนที่อยู่ก่อน August คือเดือนอะไร",
+        options: ["June", "September", "July", "October"],
+        answer: 2,
+        explanation: "July คือเดือนกรกฎาคม และอยู่ก่อน August ซึ่งคือเดือนสิงหาคม"
+      },
+      {
+        topic: "School things",
+        question: "6. What do you use to write in your notebook?",
+        options: ["A pencil", "A ruler", "An eraser", "A school bag"],
+        answer: 0,
+        explanation: "เราใช้ a pencil (ดินสอ) เขียนในสมุด ส่วน ruler ใช้วัด eraser ใช้ลบ และ school bag ใช้ใส่อุปกรณ์"
+      },
+      {
+        topic: "Classroom English",
+        question: "7. ครูพูดว่า “Open your book.” นักเรียนควรทำอย่างไร",
+        options: ["ปิดหนังสือ", "เปิดหนังสือ", "เก็บกระเป๋า", "ลุกขึ้นยืน"],
+        answer: 1,
+        explanation: "Open แปลว่า เปิด และ book แปลว่า หนังสือ ดังนั้นคำสั่งนี้หมายถึง “เปิดหนังสือของคุณ”"
+      },
+      {
+        topic: "Pronouns",
+        question: "8. เติมคำให้ถูกต้อง: “Anna is my friend. ___ is kind.”",
+        options: ["He", "It", "They", "She"],
+        answer: 3,
+        explanation: "Anna เป็นชื่อผู้หญิง ใช้สรรพนาม She เมื่อต้องการกล่าวถึงเธอ"
+      },
+      {
+        topic: "Verb to be",
+        question: "9. เติมคำให้ถูกต้อง: “I ___ a student.”",
+        options: ["is", "am", "are", "be"],
+        answer: 1,
+        explanation: "ประธาน I ใช้ verb to be คือ am จึงเป็น “I am a student.”"
+      },
+      {
+        topic: "Verb to be",
+        question: "10. เติมคำให้ถูกต้อง: “They ___ in the classroom.”",
+        options: ["am", "is", "are", "be"],
+        answer: 2,
+        explanation: "ประธาน They ใช้ are จึงเป็น “They are in the classroom.”"
+      },
+      {
+        topic: "Articles",
+        question: "11. เติม a หรือ an ให้ถูกต้อง: “It is ___ apple.”",
+        options: ["a", "an", "the a", "ไม่ต้องเติมคำ"],
+        answer: 1,
+        explanation: "ใช้ an นำหน้าคำที่ขึ้นต้นด้วยเสียงสระ เช่น apple จึงเป็น “an apple”"
+      },
+      {
+        topic: "Plural nouns",
+        question: "12. คำพหูพจน์ของ “box” คือข้อใด",
+        options: ["boxs", "boxies", "boxes", "box"],
+        answer: 2,
+        explanation: "คำนามที่ลงท้ายด้วย x มักเติม -es เมื่อเป็นพหูพจน์ ดังนั้น box เปลี่ยนเป็น boxes"
+      },
+      {
+        topic: "Have / Has",
+        question: "13. เติมคำให้ถูกต้อง: “Tom ___ a blue bicycle.”",
+        options: ["have", "has", "are", "am"],
+        answer: 1,
+        explanation: "Tom เป็นประธานเอกพจน์บุรุษที่ 3 จึงใช้ has: “Tom has a blue bicycle.”"
+      },
+      {
+        topic: "Present simple",
+        question: "14. เติมคำให้ถูกต้อง: “My sister ___ to school every day.”",
+        options: ["go", "going", "goes", "gone"],
+        answer: 2,
+        explanation: "ประธาน My sister เป็นเอกพจน์บุรุษที่ 3 ใน Present Simple จึงเติม -es เป็น goes"
+      },
+      {
+        topic: "Present simple",
+        question: "15. ข้อใดเป็นประโยคปฏิเสธที่ถูกต้อง",
+        options: ["I doesn't like milk.", "I don't like milk.", "I not like milk.", "I am not like milk."],
+        answer: 1,
+        explanation: "เมื่อประธานเป็น I และใช้กริยาทั่วไปใน Present Simple ให้ใช้ don't ตามด้วยกริยารูปเดิม"
+      },
+      {
+        topic: "Question words",
+        question: "16. “___ do you live?” — “I live in Chiang Mai.”",
+        options: ["What", "When", "Where", "Who"],
+        answer: 2,
+        explanation: "คำตอบเป็นชื่อสถานที่ จึงใช้ Where เพื่อถามว่า “คุณอาศัยอยู่ที่ไหน”"
+      },
+      {
+        topic: "Question words",
+        question: "17. “___ is your birthday?” — “It is in May.”",
+        options: ["When", "Who", "Where", "Why"],
+        answer: 0,
+        explanation: "When ใช้ถามเวลา วันที่ หรือช่วงเวลา คำตอบ “in May” จึงเหมาะกับ When"
+      },
+      {
+        topic: "Prepositions",
+        question: "18. เติมคำให้ถูกต้อง: “The cat is ___ the table.” (แมวอยู่ใต้โต๊ะ)",
+        options: ["on", "under", "between", "behind"],
+        answer: 1,
+        explanation: "Under แปลว่า ใต้ จึงตรงกับความหมายที่กำหนดว่าแมวอยู่ใต้โต๊ะ"
+      },
+      {
+        topic: "Prepositions",
+        question: "19. เติมคำให้ถูกต้อง: “The picture is ___ the wall.”",
+        options: ["on", "in", "under", "between"],
+        answer: 0,
+        explanation: "ใช้ on the wall เมื่อกล่าวถึงภาพที่ติดอยู่บนผนัง"
+      },
+      {
+        topic: "Adjectives",
+        question: "20. คำตรงข้ามของ “expensive” คือข้อใด",
+        options: ["Big", "Cheap", "Beautiful", "Long"],
+        answer: 1,
+        explanation: "Expensive แปลว่า แพง ส่วน cheap แปลว่า ราคาถูก จึงเป็นคำตรงข้ามกัน"
+      },
+      {
+        topic: "Adjectives",
+        question: "21. เติมคำให้ถูกต้อง: “An elephant is ___ than a cat.”",
+        options: ["big", "bigger", "biggest", "more big"],
+        answer: 1,
+        explanation: "เป็นการเปรียบเทียบสิ่งสองสิ่ง ใช้ comparative ของ big คือ bigger: “bigger than”"
+      },
+      {
+        topic: "Food",
+        question: "22. Which one is a fruit?",
+        options: ["Carrot", "Chicken", "Banana", "Rice"],
+        answer: 2,
+        explanation: "Banana (กล้วย) เป็นผลไม้ ส่วน carrot เป็นผัก chicken คือไก่ และ rice คือข้าว"
+      },
+      {
+        topic: "Food and drinks",
+        question: "23. “I am thirsty.” What should I drink?",
+        options: ["Water", "A sandwich", "A pencil", "A book"],
+        answer: 0,
+        explanation: "Thirsty แปลว่า กระหายน้ำ ดังนั้นควรดื่ม water (น้ำ)"
+      },
+      {
+        topic: "Daily routines",
+        question: "24. What do you usually do before going to bed?",
+        options: ["Have breakfast", "Go to school", "Brush my teeth", "Eat lunch"],
+        answer: 2,
+        explanation: "โดยทั่วไปเราควรแปรงฟันก่อนเข้านอน จึงตอบ “Brush my teeth.”"
+      },
+      {
+        topic: "Time",
+        question: "25. ถ้าเข็มนาฬิกาบอกเวลา 7:00 จะพูดว่าอย่างไร",
+        options: ["It's half past seven.", "It's seven o'clock.", "It's a quarter past seven.", "It's six o'clock."],
+        answer: 1,
+        explanation: "เวลา 7:00 พูดว่า “It's seven o'clock.” ส่วน half past คือครึ่งชั่วโมง และ a quarter past คือ 15 นาทีหลังชั่วโมง"
+      },
+      {
+        topic: "Can / Can't",
+        question: "26. เติมคำให้ถูกต้อง: “A bird ___ fly.”",
+        options: ["can", "can't", "is", "does"],
+        answer: 0,
+        explanation: "นกสามารถบินได้ จึงใช้ can เพื่อบอกความสามารถ: “A bird can fly.”"
+      },
+      {
+        topic: "Imperatives",
+        question: "27. ข้อใดเป็นคำสั่งให้ปิดประตูอย่างสุภาพ",
+        options: ["Open the door, please.", "Close the door, please.", "Clean the floor, please.", "Read the door, please."],
+        answer: 1,
+        explanation: "Close the door แปลว่า ปิดประตู และ please ทำให้คำขอสุภาพขึ้น"
+      },
+      {
+        topic: "Conversation",
+        question: "28. “Thank you for your help.” ควรตอบว่าอย่างไร",
+        options: ["You're welcome.", "I'm ten years old.", "Good evening.", "See you yesterday."],
+        answer: 0,
+        explanation: "“You're welcome.” ใช้ตอบกลับเมื่อมีคนกล่าวขอบคุณ หมายถึง “ด้วยความยินดี”"
+      },
+      {
+        topic: "Reading",
+        question: "29. อ่านข้อความ: “Mina has two brothers and one sister.” Mina has how many siblings?",
+        options: ["One", "Two", "Three", "Four"],
+        answer: 2,
+        explanation: "Mina มีพี่น้องชาย 2 คน และพี่น้องหญิง 1 คน รวม 2 + 1 = 3 คน"
+      },
+      {
+        topic: "Reading",
+        question: "30. อ่านข้อความ: “It is rainy today. Ben takes an umbrella.” Why does Ben take an umbrella?",
+        options: ["Because it is sunny.", "Because it is rainy.", "Because it is cold.", "Because he is hungry."],
+        answer: 1,
+        explanation: "ข้อความบอกว่า today is rainy (วันนี้ฝนตก) Ben จึงพกร่มเพื่อกันฝน"
+      }
+    ];
+
+    const letters = ["A", "B", "C", "D"];
+    const answers = Array(questions.length).fill(null);
+    const checked = Array(questions.length).fill(false);
+    let currentIndex = 0;
+
+    const questionCount = document.getElementById("questionCount");
+    const topicLabel = document.getElementById("topicLabel");
+    const progressFill = document.getElementById("progressFill");
+    const progressTrack = document.getElementById("progressTrack");
+    const questionText = document.getElementById("questionText");
+    const optionsContainer = document.getElementById("options");
+    const feedback = document.getElementById("feedback");
+    const prevBtn = document.getElementById("prevBtn");
+    const checkBtn = document.getElementById("checkBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const quizPanel = document.getElementById("quizPanel");
+    const resultPanel = document.getElementById("resultPanel");
+
+    function renderQuestion() {
+      const q = questions[currentIndex];
+      questionCount.textContent = `ข้อ ${currentIndex + 1} / ${questions.length}`;
+      topicLabel.textContent = q.topic;
+      progressFill.style.width = `${((currentIndex + 1) / questions.length) * 100}%`;
+      progressTrack.setAttribute("aria-valuenow", String(currentIndex + 1));
+      questionText.textContent = q.question;
+      optionsContainer.replaceChildren();
+
+      q.options.forEach((optionText, index) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "option";
+        button.setAttribute("aria-pressed", String(answers[currentIndex] === index));
+        if (answers[currentIndex] === index) button.classList.add("selected");
+        if (checked[currentIndex]) {
+          button.disabled = true;
+          if (index === q.answer) button.classList.add("correct");
+          else if (index === answers[currentIndex]) button.classList.add("wrong");
+        }
+        const letter = document.createElement("span");
+        letter.className = "letter";
+        letter.textContent = letters[index];
+        const label = document.createElement("span");
+        label.textContent = optionText;
+        button.append(letter, label);
+        button.addEventListener("click", () => selectAnswer(index));
+        optionsContainer.appendChild(button);
+      });
+
+      feedback.hidden = !checked[currentIndex];
+      if (checked[currentIndex]) showFeedback(q);
+      prevBtn.disabled = currentIndex === 0;
+      checkBtn.hidden = checked[currentIndex];
+      checkBtn.disabled = answers[currentIndex] === null;
+      nextBtn.hidden = !checked[currentIndex];
+      nextBtn.textContent = currentIndex === questions.length - 1 ? "ดูผลคะแนน →" : "ข้อถัดไป →";
+    }
+
+    function selectAnswer(index) {
+      if (checked[currentIndex]) return;
+      answers[currentIndex] = index;
+      renderQuestion();
+    }
+
+    function showFeedback(q) {
+      const isCorrect = answers[currentIndex] === q.answer;
+      feedback.className = `feedback ${isCorrect ? "good" : "bad"}`;
+      feedback.replaceChildren();
+      const title = document.createElement("strong");
+      title.textContent = isCorrect ? "✓ ถูกต้อง เก่งมาก!" : "✗ ยังไม่ถูก ลองจำคำตอบที่ถูกต้องนะ";
+      const answerLine = document.createElement("div");
+      answerLine.textContent = `คำตอบที่ถูก: ${letters[q.answer]}. ${q.options[q.answer]}`;
+      const explanation = document.createElement("div");
+      explanation.textContent = `อธิบาย: ${q.explanation}`;
+      feedback.append(title, answerLine, explanation);
+    }
+
+    function checkAnswer() {
+      if (answers[currentIndex] === null || checked[currentIndex]) return;
+      checked[currentIndex] = true;
+      renderQuestion();
+    }
+
+    function showResults() {
+      const correct = questions.reduce((sum, q, i) => sum + (answers[i] === q.answer ? 1 : 0), 0);
+      const wrong = questions.length - correct;
+      const percent = Math.round((correct / questions.length) * 100);
+      document.getElementById("scoreNumber").textContent = `${correct}/${questions.length}`;
+      document.getElementById("scorePercent").textContent = `คิดเป็น ${percent}%`;
+      document.getElementById("correctCount").textContent = String(correct);
+      document.getElementById("wrongCount").textContent = String(wrong);
+      document.getElementById("answeredCount").textContent = String(questions.length);
+      document.getElementById("resultMessage").textContent =
+        percent >= 80 ? "ยอดเยี่ยม! คุณเข้าใจเนื้อหาได้ดีมาก" :
+        percent >= 60 ? "ทำได้ดีแล้ว ลองทบทวนข้อที่ตอบผิดอีกครั้งนะ" :
+        "ไม่เป็นไร ลองทบทวนคำอธิบายแล้วทำแบบทดสอบอีกครั้ง";
+      quizPanel.hidden = true;
+      resultPanel.hidden = false;
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    prevBtn.addEventListener("click", () => {
+      if (currentIndex > 0) {
+        currentIndex--;
+        renderQuestion();
+      }
+    });
+
+    checkBtn.addEventListener("click", checkAnswer);
+
+    nextBtn.addEventListener("click", () => {
+      if (!checked[currentIndex]) return;
+      if (currentIndex < questions.length - 1) {
+        currentIndex++;
+        renderQuestion();
+      } else {
+        showResults();
+      }
+    });
+
+    document.getElementById("restartBtn").addEventListener("click", () => {
+      answers.fill(null);
+      checked.fill(false);
+      currentIndex = 0;
+      resultPanel.hidden = true;
+      quizPanel.hidden = false;
+      renderQuestion();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    renderQuestion();
+  </script>
+</body>
+</html>
